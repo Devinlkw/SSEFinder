@@ -3,4 +3,6 @@ from covid import views
 
 urlpatterns = [
     path('test', views.test),
+    path('login', views.login.as_view(), name="login")
+    
 ]
