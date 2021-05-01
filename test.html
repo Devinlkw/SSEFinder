@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block javascript %}
+    <script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script>
+        $(function() {
+            $('body').on('change', 'input[name="name_venueName"]', function() {
+                console.log('Changed');
+                var value = $('#id_venueName').val()
+                $.ajax({
+                    url: "https://geodata.gov.hk/gs/api/v1.0.0/locationSearch",
+                    type: "get", //send it through get method
+                    data: { 
+                        "q": value
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        //Do Something
+                        console.log(response)
+                        $.each(response, function(index, element) {
+                                $('#id_venueAdress').val(element.addressEN)
+                                $('#id_XCoor').val(element.x)
+                                $('#id_YCoor').val(element.y)
+                        });
+                    },
+                    error: function(xhr) {
+                        //Do Something to handle error
+                        console.log("Error")
+                    }
+                });
+            });
+
+            $('button[name="name_submit"]').on('click', function() {
+                $('input[name="name_venueName"]').val('New value').trigger('change');
+            });
+        })
+    </script>
+{% endblock %}
+
+{% block content %}
+    <h1> This is a block from test.html </h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="id_venueName" class="form-label">Venue Name</label>
+          <input type="text" class="form-control" name="name_venueName" id="id_venueName" aria-describedby="venueNameHelp">
+          <div id="venueNameHelp" class="form-text">Give the venue name for test</div>
+        </div>
+        <div class="mb-3">
+            <label for="id_venueAdress" class="form-label">Venue Address</label>
+            <input type="text" class="form-control" id="id_venueAdress" aria-describedby="venueAddressHelp">
+            <div id="venueAddressHelp" class="form-text"> Address will be retrived after check</div>
+          </div>
+        <div class="mb-3">
+            <label for="id_XCoor" class="form-label">X Coordinate</label>
+            <input type="text" class="form-control" id="id_XCoor" aria-describedby="xCoordinateHelp">
+            <div id="xCoordinateHelp" class="form-text">X coordinate will be retrived after check</div>
+        </div>
+        <div class="mb-3">
+            <label for="id_YCoor" class="form-label">Y Coordinate</label>
+            <input type="text" class="form-control" id="id_YCoor" aria-describedby="yCoordinateHelp">
+            <div id="yCoordinateHelp" class="form-text">Y coordinate will be retrived after check</div>
+        </div>
+        <button type="submit"  name="name_submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    <ul>
+    {% for item in test_data %}
+        <li>{{item.addressZH}}</li>
+        <li>{{item.nameZH}}</li>
+        <li>{{item.x}}</li>
+        <li>{{item.y}}</li>
+        <li>{{item.nameEN}}</li>
+        <li>{{item.addressEN}}</li>
+    {% endfor %}
+    </ul>
+{% endblock %}
