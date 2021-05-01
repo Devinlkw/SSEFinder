@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'login.css' %}">
+        <title>Login</title>
+    </head>
+
+    <body>
+        <form name="form" class="login_box" action="{% url 'fetch_login_data' %}" method="get">
+            <p class="header">SSE Finder Login</p>
+            <div class="element">
+                <input type="text" name="username" placeholder="Username" class="text">
+            </div>
+            <div class="element"> 
+                <input type="text" name="password" placeholder="Password" class="text">   
+            </div>
+            <div>
+                <input type="submit" value="Login" class="submit">
+            </div>
+        </form>
+
+        {% if message == 'Login Failure!' %}
+        <script>
+            alert( '{{ message }}' );
+        </script>
+        {% endif %}
+    </body>
+</html>
