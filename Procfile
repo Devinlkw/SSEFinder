@@ -1,3 +1,3 @@
-web: cd demo_config && gunicorn 
+web: cd demo_config
      --env DJANGO_SETTINGS_MODULE=demo_config.settings 
-     demo_config.wsgi --log-file -
+     gunicorn demo_config.wsgi --log-file -
