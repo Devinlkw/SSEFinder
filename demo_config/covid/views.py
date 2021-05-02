@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from covid.models import *
+from datetime import datetime, date, timedelta
 from django.forms import modelformset_factory, TextInput, CheckboxSelectMultiple
 from django.contrib import messages
 # Create your views here.
@@ -14,14 +15,28 @@ def CaseFormView(request):
     if request.method == 'POST':
         form = CaseForm(request.POST)
         formset = eventFormSet(request.POST, request.FILES)
+
+        '''
+            Check the valid form first, then check the input date.
+        '''
         if form.is_valid() and formset.is_valid():
-            messages.success(request, 'You have add the new case successfully!') 
-            new_case = form.save()
-            new_events = formset.save()
-            form = CaseForm()
-            for event in new_events:
-                new_case.events.add(event)
-            # return redirect('test')
+            birth_date = form.cleaned_data['birth']
+            onset_date = form.cleaned_data['onset_date']
+            confirm_date = form.cleaned_data['confirm_date']
+            deltaBO = onset_date - birth_date
+            deltaCO = confirm_date - onset_date
+
+            if (deltaBO > timedelta(days=0) and deltaCO > timedelta(days=0))  :
+                messages.success(request, 'You have add the new case successfully!') 
+                new_case = form.save()
+                new_events = formset.save()
+                form = CaseForm()
+
+                for event in new_events:
+                    new_case.events.add(event)
+                # return redirect('test')
+            else:
+                messages.error(request, 'Wrong date input.' + str(form.cleaned_data['birth']) )
         else:
             messages.error(request, 'There are some data miss, please check.')
     else:
@@ -31,13 +46,20 @@ def CaseFormView(request):
     return render(request, 'case_form.html', {'form': form, 'formset': formset})
 
 def EventFormView(request):
+    startDate = datetime(2020,1,23)
+    endDate = datetime.now()
 
     if request.method == 'POST':
         form = EventForm(request.POST)
         if form.is_valid():
-            new_event = form.save()
-            messages.success(request, 'You have add the new event successfully!') 
-            form = EventForm()
+            startDateDelta = form.cleaned_data['date'] - startDate.date()
+            endDateDelta = endDate.date() - form.cleaned_data['date'] 
+            if startDateDelta < timedelta(days=0) or endDateDelta < timedelta(days=0):
+                messages.error(request, str(form.cleaned_data['date']) + " is out off the covid period in Hong Kong." )
+            else:
+                new_event = form.save()
+                messages.success(request, 'You have add the new event successfully!') 
+                form = EventForm()
             # return redirect('test')
         else:
             messages.error(request, 'There are some data miss, please check.')
