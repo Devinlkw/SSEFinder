@@ -117,10 +117,14 @@ def SearchByDate(request):
         endDate = request.GET.get('endDate')
         if not startDate and Event.objects.exists():
             startDate = Event.objects.order_by('date')[0]
+            
         if not endDate:
             endDate = datetime.now().strftime("%Y-%m-%d")
-        event_list = Event.objects.all().filter(date__range=[startDate, endDate])
-        return render(request, 'search_by_date.html', { 'event_list': event_list, 'startDate': startDate, 'endDate': endDate })
+            event_list = Event.objects.all().filter(date__range=[startDate, endDate])
+            return render(request, 'search_by_date.html', { 'event_list': event_list, 'startDate': startDate})
+        else:
+            event_list = Event.objects.all().filter(date__range=[startDate, endDate])
+            return render(request, 'search_by_date.html', { 'event_list': event_list, 'startDate': startDate, 'endDate': endDate })
 
 def SearchByCase(request):
     if not Case.objects.exists():
