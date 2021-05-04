@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         {% load static %}
         <link rel="stylesheet" type="text/css" href="{% static 'login.css' %}">
@@ -20,7 +20,7 @@
             </div>
         </form>
 
-        {% if message == 'Login Failure!' %}
+        {% if message %}
         <script>
             alert( '{{ message }}' );
         </script>
