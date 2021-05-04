@@ -36,9 +36,9 @@ class Case(models.Model):
         return self.case_number
 
 
-
 class FormDateInput(DateInput):
     input_type = 'date'
+
 
 class CaseForm(ModelForm):
 
@@ -52,7 +52,6 @@ class CaseForm(ModelForm):
             'events' : CheckboxSelectMultiple
         }
 
-
 class EventForm(ModelForm):
     class Meta:
         model = Event
@@ -64,7 +63,6 @@ class EventForm(ModelForm):
             'y_coordinate' : TextInput(attrs={'readonly':True}),
             'date' : FormDateInput()
         }
-
 
 class EventToCaseForm(ModelForm):
     class Meta:
